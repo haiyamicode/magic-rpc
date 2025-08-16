@@ -36,10 +36,10 @@ This is a monorepo containing:
 
 ```bash
 # Server package
-npm install @magic-rpc/server
+yarn add @magic-rpc/server
 
-# Client package
-npm install @magic-rpc/client
+# Client package  
+yarn add @magic-rpc/client
 ```
 
 ## Quick Example
@@ -169,8 +169,11 @@ See the [example package](./packages/example) for a full working demo showing:
 - Type-safe client usage
 
 ```bash
-# Run the example
+# Run the example server
 yarn example
+
+# In another terminal, run the client
+yarn workspace example client
 ```
 
 ## Field Mappings
@@ -197,11 +200,23 @@ yarn build
 # Run development mode (watch)
 yarn dev
 
-# Run the example
+# Run the example server
 yarn example
+
+# Run the example client
+yarn workspace example client
+
+# Lint and format code
+yarn check
 
 # Clean all build artifacts
 yarn clean
+
+# Type check all packages
+yarn type-check
+
+# Publish packages to npm
+yarn npm-publish
 ```
 
 ## How It Works
