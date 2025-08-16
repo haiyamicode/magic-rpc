@@ -3,10 +3,18 @@
   "version": "1.0.2",
   "description": "Magic RPC client for type-safe RPC calls",
   "main": "dist/index.js",
+  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "rollup -c && tsc --emitDeclarationOnly",
+    "dev": "rollup -c --watch",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit"
   },
