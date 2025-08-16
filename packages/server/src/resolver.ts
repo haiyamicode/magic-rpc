@@ -7,19 +7,19 @@ import {
   ResolverContext,
   ResolverFieldSchema,
   ResolverSchema,
-  TypesSchema,
+  TypeRegistry,
 } from "./types";
 
-export class DataResolver<S extends TypesSchema, C extends CustomLoaders = {}> {
+export class DataResolver<TTypeRegistry extends TypeRegistry, TCustomLoaders extends CustomLoaders = {}> {
   constructor(
-    public typesSchema: S,
-    public resolverSchema: ResolverSchema<S, C>,
-    public context: ResolverContext<S, C>
+    public typesSchema: TTypeRegistry,
+    public resolverSchema: ResolverSchema<TTypeRegistry, TCustomLoaders>,
+    public context: ResolverContext<TTypeRegistry, TCustomLoaders>
   ) {}
 
   async resolveOne<T>(
     item: T,
-    typeKey: keyof S,
+    typeKey: keyof TTypeRegistry,
     mappings: FieldMappingLike
   ): Promise<T> {
     if (!item) {
@@ -34,7 +34,7 @@ export class DataResolver<S extends TypesSchema, C extends CustomLoaders = {}> {
       if (!resolver)
         throw new Error(`no resolver available for type ${typeName}`);
       const fieldSchema = resolver[key] as
-        | ResolverFieldSchema<S, C, T>
+        | ResolverFieldSchema<TTypeRegistry, TCustomLoaders, T>
         | undefined;
       if (!fieldSchema) {
         throw new Error(
@@ -47,7 +47,7 @@ export class DataResolver<S extends TypesSchema, C extends CustomLoaders = {}> {
         result,
         typeof fieldSchema.type === "object"
           ? fieldSchema.type
-          : this.typesSchema[fieldSchema.type],
+          : this.typesSchema[fieldSchema.type as string],
         fieldMapping
       );
     }

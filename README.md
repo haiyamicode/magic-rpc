@@ -1,20 +1,98 @@
-# Hami RPC
+# Magic RPC
 
-A standalone RPC server with GraphQL-like resolver mechanism for efficient data fetching and field resolution.
+**Type-safe JSON-RPC with GraphQL-like field resolution and automatic data loading.**
 
-## Features
+Magic RPC extends the JSON-RPC protocol to bridge the gap between traditional RPC and GraphQL by providing:
 
-- **RPC Method Handling**: Define methods with input/output validation using Superstruct schemas
-- **GraphQL-like Resolvers**: Resolve nested fields on-demand based on client mappings
-- **DataLoader Integration**: Automatic batching and caching for efficient data fetching
-- **Type Safety**: Full TypeScript support with inferred types
-- **Flexible Architecture**: Pluggable loaders and custom resolvers
+- **Simple RPC calls** with method names and typed parameters
+- **GraphQL-style field selection** to fetch only the data you need
+- **Automatic batching and caching** to prevent N+1 queries
+- **Full TypeScript safety** with compile-time validation
+
+Instead of making multiple API calls or overfetching data, clients send JSON-RPC requests specifying exactly which nested fields they want resolved. The server intelligently batches database queries and resolves relationships on-demand, returning structured JSON responses.
+
+## Why Magic RPC?
+
+**The Problem**: Traditional REST APIs either require multiple round trips for related data or return massive objects with unnecessary fields. GraphQL solves this but adds complexity with its query language and schema definition.
+
+**The Solution**: Magic RPC gives you GraphQL's selective field resolution with JSON-RPC's simplicity. Define typed methods, specify which nested fields to resolve in standard JSON requests, and let the library handle efficient data fetching automatically.
+
+**Key Benefits**:
+
+- 🎯 **Precise data fetching** - Request exactly the fields you need
+- ⚡ **Automatic optimization** - Built-in batching prevents N+1 queries
+- 🔒 **Type safety** - Full TypeScript support with runtime validation
+- 🚀 **Simple integration** - Standard JSON-RPC protocol, no complex query language
+- 🔧 **Flexible** - Works with any data source or server framework
+
+## Packages
+
+This is a monorepo containing:
+
+- **[@magic-rpc/server](./packages/server)** - Server-side RPC handler with GraphQL-like resolvers
+- **[@magic-rpc/client](./packages/client)** - Type-safe client for making RPC calls
 
 ## Installation
 
 ```bash
-npm install hami-rpc
+# Server package
+npm install @magic-rpc/server
+
+# Client package
+npm install @magic-rpc/client
 ```
+
+## Quick Example
+
+### Server Setup
+
+```typescript
+import { RpcHandler } from "@magic-rpc/server";
+
+// Simple JSON-RPC call
+const user = await rpc.handle({
+  method: "getUser",
+  input: { userId: "123" },
+});
+
+// With nested field resolution (GraphQL-like) via JSON
+const userWithRelations = await rpc.handle({
+  method: "getUser",
+  input: { userId: "123" },
+  mappings: {
+    avatar: 1, // Resolve user's avatar
+    posts: {
+      // Resolve user's posts
+      comments: {
+        // And their comments
+        author: 1, // And comment authors
+      },
+    },
+  },
+});
+```
+
+### Client Usage
+
+```typescript
+import { RpcClient, createTypedClient } from "@magic-rpc/client";
+
+// Basic client
+const client = new RpcClient({ baseUrl: "http://localhost:3000/json-rpc" });
+const user = await client.call({
+  method: "getUser",
+  input: { userId: "123" },
+  mappings: { avatar: 1 },
+});
+
+// Type-safe client
+const typedClient = createTypedClient(schema, {
+  baseUrl: "http://localhost:3000/json-rpc",
+});
+const user = await typedClient.getUser({ userId: "123" }, { avatar: 1 });
+```
+
+The request/response format follows JSON-RPC conventions with additional `mappings` field for field selection:
 
 ## Core Concepts
 
@@ -81,62 +159,18 @@ function createLoaders() {
 }
 ```
 
-## Usage Example
+## Complete Example
 
-### Basic RPC Call
+See the [example package](./packages/example) for a full working demo showing:
 
-```typescript
-const result = await rpcHandler.handle(
-  {
-    method: "getUser",
-    input: { userId: "user1" },
-  },
-  context
-);
-```
+- Server setup with RPC handlers and resolvers
+- Efficient DataLoader batching
+- GraphQL-like nested field resolution
+- Type-safe client usage
 
-### With Nested Resolution (GraphQL-like)
-
-```typescript
-const result = await rpcHandler.handle(
-  {
-    method: "getUser",
-    input: { userId: "user1" },
-    mappings: {
-      avatar: 1, // Resolve avatar field
-      followedUsers: {
-        // Resolve followed users
-        avatar: 1, // And their avatars
-      },
-    },
-  },
-  context
-);
-```
-
-### Complex Nested Resolution
-
-```typescript
-const feed = await rpcHandler.handle(
-  {
-    method: "getFeed",
-    input: { userId: "user1", limit: "10" },
-    mappings: {
-      posts: {
-        user: {
-          avatar: 1, // Post author's avatar
-        },
-        image: 1, // Post image
-        comments: {
-          // Post comments
-          user: 1, // Comment author
-        },
-        isLiked: 1, // Dynamic field based on context
-      },
-    },
-  },
-  context
-);
+```bash
+# Run the example
+yarn example
 ```
 
 ## Field Mappings
@@ -151,26 +185,56 @@ Note: Only relational object fields need this mapping, normal value fields are i
 
 This allows clients to request only the data they need, similar to GraphQL field selection.
 
-## Running the Example
+## Development
 
 ```bash
 # Install dependencies
-npm install
+yarn install
 
-# Build the library
-npm run build
+# Build all packages
+yarn build
+
+# Run development mode (watch)
+yarn dev
 
 # Run the example
-npx ts-node example/server.ts
+yarn example
+
+# Clean all build artifacts
+yarn clean
 ```
 
-## Benefits
+## How It Works
 
-1. **Efficient Data Fetching**: Only resolve requested fields
-2. **Automatic Batching**: DataLoader prevents N+1 queries
-3. **Type Safety**: Full TypeScript support
-4. **Flexible**: Works with any data source
-5. **Simple**: No complex query language, just RPC with mappings
+**Traditional approach** (multiple API calls):
+
+```typescript
+const user = await api.getUser(userId);
+const posts = await api.getUserPosts(userId);
+const comments = await Promise.all(
+  posts.map((post) => api.getPostComments(post.id))
+); // N+1 queries!
+```
+
+**Magic RPC approach** (single optimized call):
+
+```typescript
+const result = await rpc.handle({
+  method: "getUser",
+  input: { userId },
+  mappings: {
+    posts: { comments: 1 }, // Specify what you need
+  },
+});
+// Automatically batched, no N+1 queries
+```
+
+The library intelligently:
+
+1. **Batches queries** using DataLoader to prevent N+1 problems
+2. **Resolves only requested fields** based on your mappings
+3. **Validates data** with runtime type checking
+4. **Caches results** within the same request context
 
 ## API Reference
 

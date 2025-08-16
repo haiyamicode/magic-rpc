@@ -10,12 +10,12 @@ import {
   RpcMethodHandler,
   RpcPayload,
   RpcSchema,
-  TypesSchema,
+  TypeRegistry,
 } from "./types";
 
 export interface RpcHandlerConfig<
   TSchema extends RpcSchema = RpcSchema,
-  TTypes extends TypesSchema = TypesSchema,
+  TTypeRegistry extends TypeRegistry = TypeRegistry,
   TCustomLoaders extends CustomLoaders = CustomLoaders,
   TContext extends RpcContext = RpcContext
 > {
@@ -27,10 +27,10 @@ export interface RpcHandlerConfig<
       TContext
     >;
   };
-  types?: TTypes;
-  resolvers?: ResolverSchema<TTypes, TCustomLoaders>;
+  types?: TTypeRegistry;
+  resolvers?: ResolverSchema<TTypeRegistry, TCustomLoaders>;
   createLoaders?: (context: TContext) => {
-    [K in keyof TTypes]: DataLoader<string, Infer<TTypes[K]> | null>;
+    [K in keyof TTypeRegistry]: DataLoader<string, Infer<TTypeRegistry[K]> | null>;
   };
   createCustomLoaders?: (context: TContext) => TCustomLoaders;
   onError?: (error: Error, payload: RpcPayload, context: TContext) => void;
@@ -42,17 +42,17 @@ export interface RpcHandlerConfig<
 
 export class RpcHandler<
   TSchema extends RpcSchema = RpcSchema,
-  TTypes extends TypesSchema = TypesSchema,
+  TTypeRegistry extends TypeRegistry = TypeRegistry,
   TCustomLoaders extends CustomLoaders = CustomLoaders,
   TContext extends RpcContext = RpcContext
 > {
   constructor(
-    private config: RpcHandlerConfig<TSchema, TTypes, TCustomLoaders, TContext>
+    private config: RpcHandlerConfig<TSchema, TTypeRegistry, TCustomLoaders, TContext>
   ) {}
 
   private createDataResolver(
     context: TContext
-  ): DataResolver<TTypes, TCustomLoaders> | null {
+  ): DataResolver<TTypeRegistry, TCustomLoaders> | null {
     if (!this.config.types || !this.config.resolvers) {
       return null;
     }
@@ -83,8 +83,13 @@ export class RpcHandler<
     return async (params, context) => {
       let result = await handler(params, context);
 
+      // Convert to plain objects to avoid circular references from constructors/prototypes
+      result = JSON.parse(JSON.stringify(result));
+
       if (options.resolve && params.mappings) {
         result = await options.resolve(result, params.mappings);
+        // Convert to plain objects again after resolution to break any circular references
+        result = JSON.parse(JSON.stringify(result));
       }
 
       if (options.validateResult) {

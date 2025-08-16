@@ -1,0 +1,28 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Example usage of Magic RPC",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "tsx watch server.ts",
+    "start": "tsx server.ts",
+    "client": "tsx client.ts"
+  },
+  "dependencies": {
+    "@koa/cors": "^4.0.0",
+    "@magic-rpc/client": "*",
+    "@magic-rpc/server": "*",
+    "dataloader": "^2.2.2",
+    "koa": "^2.14.2",
+    "koa-bodyparser": "^4.4.1"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.13.12",
+    "@types/koa-bodyparser": "^4.3.12",
+    "@types/koa__cors": "^4.0.3",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.20.4",
+    "typescript": "^5.0.0"
+  }
+}
