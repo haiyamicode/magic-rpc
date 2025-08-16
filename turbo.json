@@ -22,6 +22,9 @@
     "test": {
       "dependsOn": ["^build"],
       "outputs": []
+    },
+    "npm-publish": {
+      "outputs": []
     }
   }
 }

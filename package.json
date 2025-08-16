@@ -16,7 +16,8 @@
     "lint": "biome lint .",
     "format": "biome format . --write",
     "check": "biome check . --write",
-    "precommit": "biome check . --write && turbo run type-check"
+    "precommit": "biome check . --write && turbo run type-check",
+    "npm-publish": "yarn build && turbo run npm-publish"
   },
   "keywords": [
     "rpc",

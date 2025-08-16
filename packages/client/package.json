@@ -1,6 +1,6 @@
 {
   "name": "@magic-rpc/client",
-  "version": "1.0.2",
+  "version": "1.0.14",
   "description": "Magic RPC client for type-safe RPC calls",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -16,7 +16,8 @@
     "build": "rollup -c && tsc --emitDeclarationOnly",
     "dev": "rollup -c --watch",
     "clean": "rm -rf dist",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "npm-publish": "npm publish"
   },
   "keywords": [
     "rpc",
@@ -29,5 +30,9 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }
