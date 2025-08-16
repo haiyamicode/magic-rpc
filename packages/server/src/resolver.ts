@@ -1,4 +1,5 @@
 import * as h from "@haiyami/hyperstruct";
+import { InputError, ServerError } from "./errors";
 import {
   CustomLoaders,
   FieldMapping,
@@ -10,7 +11,10 @@ import {
   TypeRegistry,
 } from "./types";
 
-export class DataResolver<TTypeRegistry extends TypeRegistry, TCustomLoaders extends CustomLoaders = {}> {
+export class DataResolver<
+  TTypeRegistry extends TypeRegistry,
+  TCustomLoaders extends CustomLoaders = {}
+> {
   constructor(
     public typesSchema: TTypeRegistry,
     public resolverSchema: ResolverSchema<TTypeRegistry, TCustomLoaders>,
@@ -30,14 +34,15 @@ export class DataResolver<TTypeRegistry extends TypeRegistry, TCustomLoaders ext
     const type = this.typesSchema[typeKey];
     const typeName = String(typeKey);
     for (const [key, fieldMapping] of Object.entries(mappings)) {
-      if (!type) throw new Error(`no type schema available for ${typeName}`);
+      if (!type)
+        throw new ServerError(`no type schema available for ${typeName}`);
       if (!resolver)
-        throw new Error(`no resolver available for type ${typeName}`);
+        throw new ServerError(`no resolver available for type ${typeName}`);
       const fieldSchema = resolver[key] as
         | ResolverFieldSchema<TTypeRegistry, TCustomLoaders, T>
         | undefined;
       if (!fieldSchema) {
-        throw new Error(
+        throw new InputError(
           `no resolver available for field '${key}' of type '${typeName}'`
         );
       }
@@ -86,7 +91,7 @@ export class DataResolver<TTypeRegistry extends TypeRegistry, TCustomLoaders ext
             const typeSchema = schema[fieldKey];
             if (!typeSchema) {
               if (!name || !this.resolverSchema[name]?.[fieldKey]) {
-                throw new Error(
+                throw new InputError(
                   `Invalid field '${fieldKey}'${
                     name ? ` of type '${name}'` : ""
                   }`

@@ -1,14 +1,15 @@
 export { RpcClient } from "./client";
+export * from "./errors";
 export { createTypedClient } from "./typed-client";
 export * from "./types";
 
 // Export commonly used types for user convenience
 export type {
-  RpcMethodSchema,
-  RpcSchema,
-  FieldMappings,
   FieldMapping,
+  FieldMappings,
+  RpcMethodSchema,
   RpcRequest,
   RpcResponse,
-  TypedRpcClient
+  RpcSchema,
+  TypedRpcClient,
 } from "./types";

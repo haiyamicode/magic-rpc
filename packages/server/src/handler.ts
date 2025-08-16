@@ -1,5 +1,6 @@
 import * as h from "@haiyami/hyperstruct";
 import DataLoader from "dataloader";
+import { InputError, ServerError } from "./errors";
 import { DataResolver } from "./resolver";
 import {
   CustomLoaders,
@@ -30,7 +31,10 @@ export interface RpcHandlerConfig<
   types?: TTypeRegistry;
   resolvers?: ResolverSchema<TTypeRegistry, TCustomLoaders>;
   createLoaders?: (context: TContext) => {
-    [K in keyof TTypeRegistry]: DataLoader<string, Infer<TTypeRegistry[K]> | null>;
+    [K in keyof TTypeRegistry]: DataLoader<
+      string,
+      Infer<TTypeRegistry[K]> | null
+    >;
   };
   createCustomLoaders?: (context: TContext) => TCustomLoaders;
   onError?: (error: Error, payload: RpcPayload, context: TContext) => void;
@@ -47,7 +51,12 @@ export class RpcHandler<
   TContext extends RpcContext = RpcContext
 > {
   constructor(
-    private config: RpcHandlerConfig<TSchema, TTypeRegistry, TCustomLoaders, TContext>
+    private config: RpcHandlerConfig<
+      TSchema,
+      TTypeRegistry,
+      TCustomLoaders,
+      TContext
+    >
   ) {}
 
   private createDataResolver(
@@ -77,7 +86,7 @@ export class RpcHandler<
   ): RpcMethodHandler<Infer<TSchema[K][0]>, Infer<TSchema[K][1]>, TContext> {
     const handler = this.config.handlers[method];
     if (!handler) {
-      throw new Error(`Method handler not found: ${String(method)}`);
+      throw new ServerError(`Method handler not found: ${String(method)}`);
     }
 
     return async (params, context) => {
@@ -105,17 +114,19 @@ export class RpcHandler<
     context: TContext
   ): Promise<Infer<TSchema[K][1]>> {
     if (!payload || !payload.method) {
-      throw new Error("Invalid payload: method is required");
+      throw new InputError("Invalid payload: method is required");
     }
 
     const schema = this.config.schema[payload.method];
     if (!schema) {
-      throw new Error(`Invalid method: ${String(payload.method)}`);
+      throw new InputError(`Invalid method: ${String(payload.method)}`);
     }
 
     const handler = this.config.handlers[payload.method];
     if (!handler) {
-      throw new Error(`Method not implemented: ${String(payload.method)}`);
+      throw new ServerError(
+        `Method not implemented: ${String(payload.method)}`
+      );
     }
 
     const [inputSchema, outputSchema] = schema;
@@ -127,7 +138,7 @@ export class RpcHandler<
         coerce: this.config.coerceInput !== false,
       });
       if (error) {
-        throw new Error(`Input validation error: ${error.message}`);
+        throw new InputError(`Input validation error: ${error.message}`, { cause: error });
       }
       transformedInput = validated;
     }
@@ -152,12 +163,12 @@ export class RpcHandler<
                 const errorMessage = `Output validation error: ${resultError.message}`;
                 if (this.config.onError) {
                   this.config.onError(
-                    new Error(errorMessage),
+                    new ServerError(errorMessage, { cause: resultError }),
                     payload,
                     context
                   );
                 }
-                throw new Error(errorMessage);
+                throw new ServerError(errorMessage, { cause: resultError });
               }
               return maskedResult;
             }
