@@ -24,7 +24,7 @@ export type RpcMethodSchema = [any, any];
 export type RpcSchema = Record<string, RpcMethodSchema>;
 
 // Field mappings for GraphQL-like field selection
-export type FieldMapping = 1 | Record<string, FieldMapping>;
+export type FieldMapping = 1 | Record<string, 1 | Record<string, any>>;
 export type FieldMappings = Record<string, FieldMapping>;
 
 // Simplified type inference - client doesn't need to know about schema internals
