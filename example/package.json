@@ -1,0 +1,17 @@
+{
+  "name": "hami-rpc-example",
+  "version": "1.0.0",
+  "description": "Example usage of hami-rpc",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "dataloader": "^2.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0"
+  }
+}

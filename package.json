@@ -1,0 +1,34 @@
+{
+  "name": "hami-rpc",
+  "version": "1.0.0",
+  "description": "Standalone RPC server with GraphQL-like resolver mechanism",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "example": "ts-node example/server.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "rpc",
+    "resolver",
+    "dataloader",
+    "graphql-like",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@haiyami/hyperstruct": "^1.6.0",
+    "dataloader": "^2.2.2",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0"
+  }
+}
