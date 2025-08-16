@@ -1,5 +1,5 @@
 {
-  "name": "hami-rpc-example",
+  "name": "@haiyami/magic-rpc-example",
   "version": "1.0.0",
   "description": "Example usage of hami-rpc",
   "main": "index.ts",

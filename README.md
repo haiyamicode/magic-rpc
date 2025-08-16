@@ -19,6 +19,7 @@ npm install hami-rpc
 ## Core Concepts
 
 ### 1. RPC Schema
+
 Define your RPC methods with input and output schemas:
 
 ```typescript
@@ -29,6 +30,7 @@ const rpcSchema = {
 ```
 
 ### 2. Type Definitions
+
 Register your domain types for the resolver system:
 
 ```typescript
@@ -40,13 +42,14 @@ const types = {
 ```
 
 ### 3. Resolvers
+
 Define how to resolve nested fields (similar to GraphQL):
 
 ```typescript
 const resolvers = {
   User: {
     avatar: {
-      type: 'Asset',
+      type: "Asset",
       resolve: async (user, context) => {
         return context.loaders.Asset.load(user.avatarId);
       },
@@ -54,7 +57,7 @@ const resolvers = {
   },
   Post: {
     user: {
-      type: 'User',
+      type: "User",
       resolve: async (post, context) => {
         return context.loaders.User.load(post.userId);
       },
@@ -64,6 +67,7 @@ const resolvers = {
 ```
 
 ### 4. DataLoaders
+
 Create efficient data loaders for batching:
 
 ```typescript
@@ -71,7 +75,7 @@ function createLoaders() {
   return {
     User: new DataLoader(async (ids) => {
       // Batch fetch users
-      return ids.map(id => db.users.get(id));
+      return ids.map((id) => db.users.get(id));
     }),
   };
 }
@@ -82,57 +86,70 @@ function createLoaders() {
 ### Basic RPC Call
 
 ```typescript
-const result = await rpcHandler.handle({
-  method: 'getUser',
-  input: { userId: 'user1' },
-}, context);
+const result = await rpcHandler.handle(
+  {
+    method: "getUser",
+    input: { userId: "user1" },
+  },
+  context
+);
 ```
 
 ### With Nested Resolution (GraphQL-like)
 
 ```typescript
-const result = await rpcHandler.handle({
-  method: 'getUser',
-  input: { userId: 'user1' },
-  mappings: {
-    avatar: 1,           // Resolve avatar field
-    followedUsers: {     // Resolve followed users
-      avatar: 1,         // And their avatars
+const result = await rpcHandler.handle(
+  {
+    method: "getUser",
+    input: { userId: "user1" },
+    mappings: {
+      avatar: 1, // Resolve avatar field
+      followedUsers: {
+        // Resolve followed users
+        avatar: 1, // And their avatars
+      },
     },
   },
-}, context);
+  context
+);
 ```
 
 ### Complex Nested Resolution
 
 ```typescript
-const feed = await rpcHandler.handle({
-  method: 'getFeed',
-  input: { userId: 'user1', limit: '10' },
-  mappings: {
-    posts: {
-      user: {
-        avatar: 1,       // Post author's avatar
+const feed = await rpcHandler.handle(
+  {
+    method: "getFeed",
+    input: { userId: "user1", limit: "10" },
+    mappings: {
+      posts: {
+        user: {
+          avatar: 1, // Post author's avatar
+        },
+        image: 1, // Post image
+        comments: {
+          // Post comments
+          user: 1, // Comment author
+        },
+        isLiked: 1, // Dynamic field based on context
       },
-      image: 1,          // Post image
-      comments: {        // Post comments
-        user: 1,         // Comment author
-      },
-      isLiked: 1,        // Dynamic field based on context
     },
   },
-}, context);
+  context
+);
 ```
 
 ## Field Mappings
 
-The `mappings` parameter controls which fields to resolve:
+The `mappings` parameter controls which relational fields to resolve:
 
 - `1` - Resolve this field
-- `{ nested: 1 }` - Resolve nested fields
-- Omitted fields are not resolved (remain as IDs or null)
+- `{ someNestedEntity: 1 }` - Resolve nested relational entity inside the field
+- Omitted relational fields are not resolved (remain as IDs or null).
 
-This allows clients to request exactly the data they need, similar to GraphQL field selection.
+Note: Only relational object fields need this mapping, normal value fields are included automatically, we do not support excluding normal fields from result since that only introduces extra inconsistency in response schema without any significant size savings.
+
+This allows clients to request only the data they need, similar to GraphQL field selection.
 
 ## Running the Example
 
@@ -161,16 +178,16 @@ npx ts-node example/server.ts
 
 ```typescript
 new RpcHandler({
-  schema: RpcSchema,           // Method definitions
+  schema: RpcSchema, // Method definitions
   handlers: RpcMethodHandlers, // Method implementations
-  types?: TypesSchema,         // Type definitions
-  resolvers?: ResolverSchema,  // Field resolvers
-  createLoaders?: Function,    // DataLoader factory
-  createCustomLoaders?: Function, // Custom loader factory
-  validateInput?: boolean,     // Validate inputs (default: true)
-  validateOutput?: boolean,    // Validate outputs (default: true)
-  coerceInput?: boolean,       // Coerce input types (default: true)
-  maskOutput?: boolean,        // Mask extra output fields (default: true)
+  types: TypesSchema, // Type definitions
+  resolvers: ResolverSchema, // Field resolvers
+  createLoaders: Function, // DataLoader factory
+  createCustomLoaders: Function, // Custom loader factory
+  validateInput: boolean, // Validate inputs (default: true)
+  validateOutput: boolean, // Validate outputs (default: true)
+  coerceInput: boolean, // Coerce input types (default: true)
+  maskOutput: boolean, // Mask extra output fields (default: true)
 });
 ```
 

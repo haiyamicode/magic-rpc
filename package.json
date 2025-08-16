@@ -1,5 +1,5 @@
 {
-  "name": "hami-rpc",
+  "name": "@haiyami/magic-rpc",
   "version": "1.0.0",
   "description": "Standalone RPC server with GraphQL-like resolver mechanism",
   "main": "dist/index.js",
