@@ -19,6 +19,8 @@ export interface RpcResponse<TOutput = any> {
 
 import type { Infer, Struct } from "@haiyami/hyperstruct";
 
+export type { Infer, Struct } from "@haiyami/hyperstruct";
+
 export interface RpcClientConfig {
   baseUrl: string;
   timeout?: number;

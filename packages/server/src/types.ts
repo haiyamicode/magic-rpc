@@ -1,8 +1,7 @@
 import type * as h from "@haiyami/hyperstruct";
 import type DataLoader from "dataloader";
 
-// Re-export TypeSchema and Infer for compatibility
-export { Infer, Struct as TypeSchema } from "@haiyami/hyperstruct";
+export { Infer, Struct } from "@haiyami/hyperstruct";
 
 // User-friendly type definitions
 // biome-ignore lint/suspicious/noExplicitAny: Schema types are runtime validated
