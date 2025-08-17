@@ -1,4 +1,4 @@
-import { RpcClient, createTypedClient } from "@magic-rpc/client";
+import { createTypedClient, RpcClient } from "@magic-rpc/client";
 import { rpcSchema } from "./schema";
 
 const SERVER_URL = "http://localhost:3000/json-rpc";
@@ -9,6 +9,7 @@ async function demonstrateBasicClient() {
   const client = new RpcClient({
     baseUrl: SERVER_URL,
     timeout: 5000,
+    schema: rpcSchema,
   });
 
   // Simple RPC call
@@ -19,8 +20,8 @@ async function demonstrateBasicClient() {
       input: { id: "1" },
     });
     console.log("   Result:", user);
-  } catch (error: any) {
-    console.error("   Error:", error.message);
+  } catch (error: unknown) {
+    console.error("   Error:", error);
   }
 
   // RPC call with field mappings
@@ -32,8 +33,8 @@ async function demonstrateBasicClient() {
       mappings: { team: 1 }, // Resolve team field
     });
     console.log("   Result:", JSON.stringify(userWithTeam, null, 2));
-  } catch (error: any) {
-    console.error("   Error:", error.message);
+  } catch (error: unknown) {
+    console.error("   Error:", error);
   }
 
   // Batch requests
@@ -45,8 +46,8 @@ async function demonstrateBasicClient() {
       { method: "getTeam", input: { id: "team1" } },
     ]);
     console.log("   Results:", results);
-  } catch (error: any) {
-    console.error("   Error:", error.message);
+  } catch (error: unknown) {
+    console.error("   Error:", error);
   }
 }
 
@@ -64,8 +65,8 @@ async function demonstrateTypedClient() {
   try {
     const user = await client.getUser({ id: "1" });
     console.log("   Result:", user);
-  } catch (error: any) {
-    console.error("   Error:", error.message);
+  } catch (error: unknown) {
+    console.error("   Error:", error);
   }
 
   // Type-safe with field mappings
@@ -76,8 +77,8 @@ async function demonstrateTypedClient() {
       { team: { leader: 1 } } // Deep nesting with type safety
     );
     console.log("   Result:", JSON.stringify(userWithTeam, null, 2));
-  } catch (error: any) {
-    console.error("   Error:", error.message);
+  } catch (error: unknown) {
+    console.error("   Error:", error);
   }
 
   // Multiple type-safe calls
@@ -90,8 +91,8 @@ async function demonstrateTypedClient() {
 
     console.log("   Users with teams:", JSON.stringify(users, null, 2));
     console.log("   Team with relations:", JSON.stringify(team, null, 2));
-  } catch (error: any) {
-    console.error("   Error:", error.message);
+  } catch (error: unknown) {
+    console.error("   Error:", error);
   }
 }
 
@@ -120,8 +121,8 @@ async function demonstrateComplexQuery() {
     console.log(
       "\n✨ Notice how DataLoader efficiently batches all the database queries!"
     );
-  } catch (error: any) {
-    console.error("   Error:", error.message);
+  } catch (error: unknown) {
+    console.error("   Error:", error);
   }
 }
 
@@ -143,12 +144,8 @@ async function main() {
     await demonstrateComplexQuery();
 
     console.log("\n🎉 All demos completed successfully!");
-  } catch (error: any) {
-    if (error.code === "ECONNREFUSED") {
-      console.error("❌ Cannot connect to server. Make sure to run: yarn dev");
-    } else {
-      console.error("❌ Error:", error.message);
-    }
+  } catch (error: unknown) {
+    console.error("❌ Error:", error);
     process.exit(1);
   }
 }

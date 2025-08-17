@@ -1,6 +1,7 @@
-import * as h from "@haiyami/hyperstruct";
+/** biome-ignore-all lint/suspicious/noExplicitAny: schema traversal requires any */
+import type * as h from "@haiyami/hyperstruct";
 import { InputError, ServerError } from "./errors";
-import {
+import type {
   CustomLoaders,
   FieldMapping,
   FieldMappingLike,
@@ -11,9 +12,12 @@ import {
   TypeRegistry,
 } from "./types";
 
+// biome-ignore lint/complexity/noBannedTypes: Generic default type
+type EmptyObject = {};
+
 export class DataResolver<
   TTypeRegistry extends TypeRegistry,
-  TCustomLoaders extends CustomLoaders = {}
+  TCustomLoaders extends CustomLoaders = EmptyObject,
 > {
   constructor(
     public typesSchema: TTypeRegistry,

@@ -8,6 +8,7 @@ export const UserSchema = h.defineType(
     id: h.string(),
     name: h.string(),
     teamId: h.string(),
+    createdAt: h.date(),
   })
 );
 
@@ -17,6 +18,7 @@ export const TeamSchema = h.defineType(
     id: h.string(),
     name: h.string(),
     leaderId: h.string(),
+    createdAt: h.date(),
   })
 );
 

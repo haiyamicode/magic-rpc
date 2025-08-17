@@ -38,7 +38,7 @@ This is a monorepo containing:
 # Server package
 yarn add @magic-rpc/server
 
-# Client package  
+# Client package
 yarn add @magic-rpc/client
 ```
 
@@ -266,7 +266,6 @@ new RpcHandler({
   validateInput: boolean, // Validate inputs (default: true)
   validateOutput: boolean, // Validate outputs (default: true)
   coerceInput: boolean, // Coerce input types (default: true)
-  maskOutput: boolean, // Mask extra output fields (default: true)
 });
 ```
 

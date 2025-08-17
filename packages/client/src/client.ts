@@ -1,7 +1,9 @@
-import type { RpcRequest, RpcResponse, RpcClientConfig } from "./types";
+import * as h from "@haiyami/hyperstruct";
+import { RpcError } from "./errors";
+import type { RpcClientConfig, RpcRequest, RpcResponse } from "./types";
 
 export class RpcClient {
-  private config: Required<RpcClientConfig>;
+  private config: RpcClientConfig & Required<Omit<RpcClientConfig, "schema">>;
 
   constructor(config: RpcClientConfig) {
     this.config = {
@@ -11,9 +13,8 @@ export class RpcClient {
     };
   }
 
-  async call<TOutput = any>(
-    request: RpcRequest
-  ): Promise<TOutput> {
+  // biome-ignore lint/suspicious/noExplicitAny: Generic default type
+  async call<TOutput = any>(request: RpcRequest): Promise<TOutput> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
 
@@ -37,22 +38,21 @@ export class RpcClient {
       const result: RpcResponse<TOutput> = await response.json();
 
       if (result.error) {
-        const error = new Error(result.error.message);
-        (error as any).code = result.error.code;
-        (error as any).data = result.error.data;
-        throw error;
+        throw new RpcError(result.error);
       }
 
-      return result.result!;
+      if (!result.result) {
+        throw new Error("No result in response");
+      }
+      return this.validateAndCoerce(result.result, request.method);
     } catch (error) {
       clearTimeout(timeoutId);
       throw error;
     }
   }
 
-  async batch<TOutput = any>(
-    requests: RpcRequest[]
-  ): Promise<TOutput[]> {
+  // biome-ignore lint/suspicious/noExplicitAny: Generic default type
+  async batch<TOutput = any>(requests: RpcRequest[]): Promise<TOutput[]> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
 
@@ -75,18 +75,34 @@ export class RpcClient {
 
       const results: RpcResponse<TOutput>[] = await response.json();
 
-      return results.map((result) => {
+      return results.map((result, index) => {
         if (result.error) {
-          const error = new Error(result.error.message);
-          (error as any).code = result.error.code;
-          (error as any).data = result.error.data;
-          throw error;
+          throw new RpcError(result.error);
         }
-        return result.result!;
+
+        if (!result.result) {
+          throw new Error(`No result in response for request ${index}`);
+        }
+        return this.validateAndCoerce(result.result, requests[index].method);
       });
     } catch (error) {
       clearTimeout(timeoutId);
       throw error;
     }
+  }
+
+  private validateAndCoerce<T>(result: T, method: string): T {
+    // Apply hyperstruct validation with coercion if schema is available
+    if (this.config.schema?.[method]) {
+      const [, outputSchema] = this.config.schema[method];
+      const [error, value] = h.validate(result, outputSchema, {
+        coerce: true,
+        mask: true,
+      });
+      if (error) throw error;
+      return value as T;
+    }
+
+    return result;
   }
 }

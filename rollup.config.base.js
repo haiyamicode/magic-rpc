@@ -1,7 +1,7 @@
 import typescript from "@rollup/plugin-typescript";
 import { defineConfig } from "rollup";
 
-export function createConfig(packageName, input = "./src/index.ts") {
+export function createConfig(_packageName, input = "./src/index.ts") {
   return defineConfig({
     input,
     plugins: [
@@ -11,11 +11,7 @@ export function createConfig(packageName, input = "./src/index.ts") {
         declarationMap: false,
       }),
     ],
-    external: [
-      "@haiyami/hyperstruct",
-      "dataloader",
-      "lodash",
-    ],
+    external: ["@haiyami/hyperstruct", "dataloader", "lodash"],
     output: [
       {
         file: "./dist/index.esm.js",

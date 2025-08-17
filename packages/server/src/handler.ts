@@ -1,24 +1,42 @@
 import * as h from "@haiyami/hyperstruct";
-import DataLoader from "dataloader";
+import type DataLoader from "dataloader";
 import { InputError, ServerError } from "./errors";
 import { DataResolver } from "./resolver";
-import {
+import type {
   CustomLoaders,
   FieldMappings,
   Infer,
   ResolverSchema,
-  RpcContext,
   RpcMethodHandler,
   RpcPayload,
   RpcSchema,
   TypeRegistry,
 } from "./types";
 
+// biome-ignore lint/complexity/noBannedTypes: Generic default type
+type EmptyObject = {};
+
 export interface RpcHandlerConfig<
   TSchema extends RpcSchema = RpcSchema,
+  TCustomContext extends object = EmptyObject,
   TTypeRegistry extends TypeRegistry = TypeRegistry,
   TCustomLoaders extends CustomLoaders = CustomLoaders,
-  TContext extends RpcContext = RpcContext
+  TTypeLoaders extends {
+    [K in keyof TTypeRegistry]: DataLoader<
+      string,
+      Infer<TTypeRegistry[K]> | null
+    >;
+  } = {
+    [K in keyof TTypeRegistry]: DataLoader<
+      string,
+      Infer<TTypeRegistry[K]> | null
+    >;
+  },
+  TAllLoaders extends TTypeLoaders & TCustomLoaders = TTypeLoaders &
+    TCustomLoaders,
+  TContext extends TCustomContext & {
+    loaders: TAllLoaders;
+  } = TCustomContext & { loaders: TAllLoaders },
 > {
   schema: TSchema;
   handlers: {
@@ -29,14 +47,12 @@ export interface RpcHandlerConfig<
     >;
   };
   types?: TTypeRegistry;
+  customContext?: TCustomContext;
   resolvers?: ResolverSchema<TTypeRegistry, TCustomLoaders>;
-  createLoaders?: (context: TContext) => {
-    [K in keyof TTypeRegistry]: DataLoader<
-      string,
-      Infer<TTypeRegistry[K]> | null
-    >;
-  };
-  createCustomLoaders?: (context: TContext) => TCustomLoaders;
+  createLoaders?: (context: TCustomContext) => TTypeLoaders;
+  createCustomLoaders?: (
+    context: TCustomContext & { loaders: TTypeLoaders }
+  ) => TCustomLoaders;
   onError?: (error: Error, payload: RpcPayload, context: TContext) => void;
   validateInput?: boolean;
   validateOutput?: boolean;
@@ -46,15 +62,34 @@ export interface RpcHandlerConfig<
 
 export class RpcHandler<
   TSchema extends RpcSchema = RpcSchema,
+  TCustomContext extends object = EmptyObject,
   TTypeRegistry extends TypeRegistry = TypeRegistry,
   TCustomLoaders extends CustomLoaders = CustomLoaders,
-  TContext extends RpcContext = RpcContext
+  TTypeLoaders extends {
+    [K in keyof TTypeRegistry]: DataLoader<
+      string,
+      Infer<TTypeRegistry[K]> | null
+    >;
+  } = {
+    [K in keyof TTypeRegistry]: DataLoader<
+      string,
+      Infer<TTypeRegistry[K]> | null
+    >;
+  },
+  TAllLoaders extends TTypeLoaders & TCustomLoaders = TTypeLoaders &
+    TCustomLoaders,
+  TContext extends TCustomContext & {
+    loaders: TAllLoaders;
+  } = TCustomContext & { loaders: TAllLoaders },
 > {
   constructor(
     private config: RpcHandlerConfig<
       TSchema,
+      TCustomContext,
       TTypeRegistry,
       TCustomLoaders,
+      TTypeLoaders,
+      TAllLoaders,
       TContext
     >
   ) {}
@@ -66,21 +101,15 @@ export class RpcHandler<
       return null;
     }
 
-    const loaders = {
-      ...(this.config.createLoaders?.(context) || {}),
-      ...(this.config.createCustomLoaders?.(context) || {}),
-    } as any;
-
-    return new DataResolver(this.config.types, this.config.resolvers, {
-      loaders,
-      requestContext: context,
-    });
+    return new DataResolver(this.config.types, this.config.resolvers, context);
   }
 
   private composeHandler<K extends keyof TSchema>(
     method: K,
     options: {
+      // biome-ignore lint/suspicious/noExplicitAny: payload types are unknown
       resolve?: (result: any, mappings: FieldMappings) => Promise<any>;
+      // biome-ignore lint/suspicious/noExplicitAny: result types are unknown
       validateResult?: (result: any) => any;
     } = {}
   ): RpcMethodHandler<Infer<TSchema[K][0]>, Infer<TSchema[K][1]>, TContext> {
@@ -90,19 +119,14 @@ export class RpcHandler<
     }
 
     return async (params, context) => {
-      let result = await handler(params, context);
-
-      // Convert to plain objects to avoid circular references from constructors/prototypes
-      result = JSON.parse(JSON.stringify(result));
+      let result = structuredClone(await handler(params, context));
 
       if (options.resolve && params.mappings) {
         result = await options.resolve(result, params.mappings);
-        // Convert to plain objects again after resolution to break any circular references
-        result = JSON.parse(JSON.stringify(result));
       }
 
       if (options.validateResult) {
-        result = options.validateResult(result);
+        return options.validateResult(result);
       }
 
       return result;
@@ -111,7 +135,7 @@ export class RpcHandler<
 
   async handle<K extends keyof TSchema>(
     payload: RpcPayload<Infer<TSchema[K][0]>> & { method: K },
-    context: TContext
+    customContext: TCustomContext
   ): Promise<Infer<TSchema[K][1]>> {
     if (!payload || !payload.method) {
       throw new InputError("Invalid payload: method is required");
@@ -129,6 +153,19 @@ export class RpcHandler<
       );
     }
 
+    // Create full context with auto-populated loaders
+    const typeLoaders = (this.config.createLoaders?.(customContext) ??
+      ({} as TTypeLoaders)) satisfies TTypeLoaders;
+    const typeLoaderContext = {
+      ...customContext,
+      loaders: typeLoaders,
+    } satisfies TCustomContext & { loaders: TTypeLoaders };
+    const customLoaders =
+      this.config.createCustomLoaders?.(typeLoaderContext) ??
+      ({} as TCustomLoaders satisfies TCustomLoaders);
+    const allLoaders = { ...typeLoaders, ...customLoaders } as TAllLoaders;
+    const context = { ...customContext, loaders: allLoaders } as TContext;
+
     const [inputSchema, outputSchema] = schema;
     const input = payload.input || {};
 
@@ -138,7 +175,9 @@ export class RpcHandler<
         coerce: this.config.coerceInput !== false,
       });
       if (error) {
-        throw new InputError(`Input validation error: ${error.message}`, { cause: error });
+        throw new InputError(`Input validation error: ${error.message}`, {
+          cause: error,
+        });
       }
       transformedInput = validated;
     }
@@ -158,7 +197,11 @@ export class RpcHandler<
                 this.config.maskOutput !== false
                   ? h.mask(result, outputSchema)
                   : result;
-              const [resultError] = outputSchema.validate(maskedResult);
+              const [resultError, coercedResult] = h.validate(
+                maskedResult,
+                outputSchema,
+                { coerce: true }
+              );
               if (resultError) {
                 const errorMessage = `Output validation error: ${resultError.message}`;
                 if (this.config.onError) {
@@ -170,7 +213,7 @@ export class RpcHandler<
                 }
                 throw new ServerError(errorMessage, { cause: resultError });
               }
-              return maskedResult;
+              return coercedResult;
             }
           : undefined,
     });
@@ -193,10 +236,10 @@ export class RpcHandler<
 
   async handleBatch<K extends keyof TSchema>(
     payloads: Array<RpcPayload<Infer<TSchema[K][0]>> & { method: K }>,
-    context: TContext
+    customContext: TCustomContext
   ): Promise<Array<Infer<TSchema[K][1]>>> {
     return Promise.all(
-      payloads.map((payload) => this.handle(payload, context))
+      payloads.map((payload) => this.handle(payload, customContext))
     );
   }
 

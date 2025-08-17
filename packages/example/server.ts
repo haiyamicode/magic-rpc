@@ -2,8 +2,8 @@ import cors from "@koa/cors";
 import { RpcHandler } from "@magic-rpc/server";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
-import { createCustomLoaders, createLoaders, resolvers, users } from "./data";
-import { rpcSchema, types } from "./schema";
+import { createCustomLoaders, createLoaders, users } from "./data";
+import { rpcSchema, types, UserSchema } from "./schema";
 
 // Create RPC handler
 const rpc = new RpcHandler({
@@ -24,11 +24,35 @@ const rpc = new RpcHandler({
     },
   },
   types,
-  resolvers,
+  resolvers: {
+    User: {
+      team: {
+        type: "Team",
+        resolve: (user, context) => {
+          if (!user.teamId) return null;
+          return context.loaders.Team.load(user.teamId);
+        },
+      },
+    },
+    Team: {
+      leader: {
+        type: "User",
+        resolve: (team, context) => {
+          if (!team.leaderId) return null;
+          return context.loaders.User.load(team.leaderId);
+        },
+      },
+      members: {
+        type: UserSchema,
+        resolve: (team, context) => {
+          if (!team.id) return [];
+          return context.loaders.TeamMembers.load(team.id);
+        },
+      },
+    },
+  },
   createLoaders,
   createCustomLoaders,
-  maskOutput: false,
-  validateOutput: false,
 });
 
 // Create Koa app
@@ -41,6 +65,7 @@ app.use(bodyParser());
 app.use(async (ctx, next) => {
   if (ctx.path === "/json-rpc" && ctx.method === "POST") {
     try {
+      // biome-ignore lint/suspicious/noExplicitAny: necessary
       const request = (ctx.request as any).body;
 
       // Handle single request
@@ -53,7 +78,7 @@ app.use(async (ctx, next) => {
       // Handle batch requests
       const results = await rpc.handleBatch(request, {});
       ctx.body = results.map((result) => ({ result }));
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("❌ RPC Error:", error);
       throw error; // Rethrow to see full stack trace
     }
