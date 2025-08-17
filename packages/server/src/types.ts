@@ -96,7 +96,7 @@ export type ResolverFieldSchema<
   | SingleResolverFieldSchema<TTypeRegistry, TCustomLoaders, T>;
 
 // biome-ignore lint/complexity/noBannedTypes: Generic default type
-type EmptyObject = {};
+export type EmptyObject = {};
 
 export type ResolverContext<
   TTypeRegistry extends TypeRegistry,

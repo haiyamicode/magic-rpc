@@ -3,6 +3,7 @@ import type * as h from "@haiyami/hyperstruct";
 import { InputError, ServerError } from "./errors";
 import type {
   CustomLoaders,
+  EmptyObject,
   FieldMapping,
   FieldMappingLike,
   FieldMappings,
@@ -11,9 +12,6 @@ import type {
   ResolverSchema,
   TypeRegistry,
 } from "./types";
-
-// biome-ignore lint/complexity/noBannedTypes: Generic default type
-type EmptyObject = {};
 
 export class DataResolver<
   TTypeRegistry extends TypeRegistry,

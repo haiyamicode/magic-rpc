@@ -1,6 +1,6 @@
 {
   "name": "@magic-rpc/server",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Magic RPC server with GraphQL-like resolver mechanism",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

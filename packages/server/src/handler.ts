@@ -4,6 +4,7 @@ import { InputError, ServerError } from "./errors";
 import { DataResolver } from "./resolver";
 import type {
   CustomLoaders,
+  EmptyObject,
   FieldMappings,
   Infer,
   ResolverSchema,
@@ -12,9 +13,6 @@ import type {
   RpcSchema,
   TypeRegistry,
 } from "./types";
-
-// biome-ignore lint/complexity/noBannedTypes: Generic default type
-type EmptyObject = {};
 
 export interface RpcHandlerConfig<
   TSchema extends RpcSchema = RpcSchema,
