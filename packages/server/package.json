@@ -1,6 +1,6 @@
 {
   "name": "@magic-rpc/server",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Magic RPC server with GraphQL-like resolver mechanism",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -31,8 +31,7 @@
   "license": "MIT",
   "dependencies": {
     "@haiyami/hyperstruct": "^1.7.0",
-    "dataloader": "^2.2.2",
-    "lodash": "^4.17.21"
+    "dataloader": "^2.2.2"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.202",

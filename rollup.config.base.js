@@ -11,7 +11,7 @@ export function createConfig(_packageName, input = "./src/index.ts") {
         declarationMap: false,
       }),
     ],
-    external: ["@haiyami/hyperstruct", "dataloader", "lodash"],
+    external: ["@haiyami/hyperstruct", "dataloader"],
     output: [
       {
         file: "./dist/index.esm.js",
