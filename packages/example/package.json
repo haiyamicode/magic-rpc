@@ -10,7 +10,7 @@
     "client": "tsx client.ts"
   },
   "dependencies": {
-    "@haiyami/hyperstruct": "^1.8.1",
+    "@haiyami/hyperstruct": "^1.8.2",
     "@koa/cors": "^4.0.0",
     "@magic-rpc/client": "*",
     "@magic-rpc/server": "*",
