@@ -276,10 +276,10 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.25.9.tgz#585624dc829cfb6e7c0aa6c3ca7d7e6daa87e34f"
   integrity sha512-PPOl1mi6lpLNQxnGoyAfschAodRFYXJ+9fs6WHXz7CSWKbOqiMZsubC+BQsVKuul+3vKLuwTHsS2c2y9EoKwxQ==
 
-"@haiyami/hyperstruct@^1.8.3":
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/@haiyami/hyperstruct/-/hyperstruct-1.8.3.tgz#b172495705bb5e8599b108edb37d6a6a51bab577"
-  integrity sha512-3U/z4WqwJtxgRCxpDJRmJ9uYJN9DxnvqfXCgSW0qslDDG36X6U3AK/Z6Tiv/cgsSmh2Jbg+ffx4fLR+0qw6gcQ==
+"@haiyami/hyperstruct@^1.8.4":
+  version "1.8.4"
+  resolved "https://registry.yarnpkg.com/@haiyami/hyperstruct/-/hyperstruct-1.8.4.tgz#cc3fe5f07146ffd10a52be2acb79008a1b35a988"
+  integrity sha512-dd0z2D8rZxPetG7ioaNd+65JkD5q0jGOYyimKBA8LbPDJauUiaOxkm8e+OmTUCMVvGQMPUvgXDSkXF5SsIupjg==
   dependencies:
     acorn "^7.4.1"
     acorn-jsx "^5.3.2"
@@ -1185,7 +1185,7 @@
   integrity sha512-/pyBZWSLD2n0dcHE3hq8s8ZvcETHtEuF+3E7XVt0Ig2nvsVQXdghHVcEkIWjy9A0wKfTn97a/PSDYohKIlnP/w==
 
 "@types/minimist@^1.2.0":
-  version "1.2.8"
+  version "1.2.5"
   resolved "https://registry.npmjs.org/@types/minimist/-/minimist-1.2.5.tgz"
   integrity sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==
 
@@ -1212,7 +1212,7 @@
   integrity sha512-eOunJqu0K1923aExK6y8p6fsihYEn/BYuQ4g0CxAAgFc4b/ZLN4CrsRZ55srTdqoiLzU2B2evC+apEIxprEzkQ==
 
 "@types/range-parser@*":
-  version "1.2.8"
+  version "1.2.7"
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.7.tgz#50ae4353eaaddc04044279812f52c8c65857dbcb"
   integrity sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==
 
@@ -1446,7 +1446,7 @@ array-union@^2.1.0:
   integrity sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==
 
 array.prototype.findlastindex@^1.2.2:
-  version "1.2.8"
+  version "1.2.6"
   resolved "https://registry.npmjs.org/array.prototype.findlastindex/-/array.prototype.findlastindex-1.2.6.tgz"
   integrity sha512-F/TKATkzseUExPlfvmwQKGITM3DGTK+vkAsCZoDc5daVygbJBnjEUCbgkAvVFsgfXfX4YIqZ/27G3k3tdXrTxQ==
   dependencies:
@@ -3230,7 +3230,7 @@ is-boolean-object@^1.1.2, is-boolean-object@^1.2.1:
     has-tostringtag "^1.0.2"
 
 is-callable@^1.2.7:
-  version "1.2.8"
+  version "1.2.7"
   resolved "https://registry.npmjs.org/is-callable/-/is-callable-1.2.7.tgz"
   integrity sha512-1BC0BVFhS/p0qtw6enp8e+8OD0UrK0oFLztSjNzhcKA3WDuJxxAPXzPuPtKkjEY9UUoEWlX/8fgKeu2S8i9JTA==
 
@@ -5810,7 +5810,7 @@ widest-line@^3.1.0:
     string-width "^4.0.0"
 
 word-wrap@^1.2.5:
-  version "1.2.8"
+  version "1.2.5"
   resolved "https://registry.npmjs.org/word-wrap/-/word-wrap-1.2.5.tgz"
   integrity sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==
 
