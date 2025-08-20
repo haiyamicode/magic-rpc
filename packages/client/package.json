@@ -1,6 +1,6 @@
 {
   "name": "@magic-rpc/client",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Magic RPC client for type-safe RPC calls",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -28,7 +28,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@haiyami/hyperstruct": "^1.8.2"
+    "@haiyami/hyperstruct": "^1.8.3"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
