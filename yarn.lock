@@ -276,10 +276,10 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.25.9.tgz#585624dc829cfb6e7c0aa6c3ca7d7e6daa87e34f"
   integrity sha512-PPOl1mi6lpLNQxnGoyAfschAodRFYXJ+9fs6WHXz7CSWKbOqiMZsubC+BQsVKuul+3vKLuwTHsS2c2y9EoKwxQ==
 
-"@haiyami/hyperstruct@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@haiyami/hyperstruct/-/hyperstruct-1.7.0.tgz#3aca22331e860ec99cd34bb4a81c3f089e6a821b"
-  integrity sha512-WuT0kHGfIvukOSvAuygZbJVqIGXD4mYqj6nhy5S2KIOqw141dL5auAc2isSF98AQ3+Dr9DN9fo4hZukF0UNpOQ==
+"@haiyami/hyperstruct@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@haiyami/hyperstruct/-/hyperstruct-1.8.0.tgz#aa354614ca785208d7f2cdce3248bed5aed97d43"
+  integrity sha512-nq/lhe+2lfuRRm0B7uBoGAqwt7qbdQprwiTpqiQa6ujqjpDVV0RAOyoYpKQuV/4fNUA347zV73XVSwBafuh5jw==
   dependencies:
     acorn "^7.4.1"
     acorn-jsx "^5.3.2"
@@ -2710,7 +2710,7 @@ functional-red-black-tree@^1.0.1:
   integrity sha512-dsKNQNdj6xA3T+QlADDA7mOSlX0qiMINjn0cgr+eGHGsbSHzTabcIogz2+p/iqP1Xs6EP/sS2SbqH+brGTbq0g==
 
 functions-have-names@^1.2.3:
-  version "1.2.3"
+  version "1.2.4"
   resolved "https://registry.npmjs.org/functions-have-names/-/functions-have-names-1.2.3.tgz"
   integrity sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==
 
@@ -4612,7 +4612,7 @@ qs@^6.5.2:
     side-channel "^1.1.0"
 
 queue-microtask@^1.2.2, queue-microtask@^1.2.3:
-  version "1.2.3"
+  version "1.2.4"
   resolved "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
