@@ -26,6 +26,7 @@ export interface RpcClientConfig {
   timeout?: number;
   headers?: Record<string, string>;
   schema?: RpcSchema;
+  validateResponse?: boolean;
 }
 
 // Core schema types - shared between client and server

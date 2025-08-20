@@ -9,6 +9,7 @@ export class RpcClient {
     this.config = {
       timeout: 5000,
       headers: {},
+      validateResponse: true,
       ...config,
     };
   }
@@ -93,7 +94,7 @@ export class RpcClient {
 
   private validateAndCoerce<T>(result: T, method: string): T {
     // Apply hyperstruct validation with coercion if schema is available
-    if (this.config.schema?.[method]) {
+    if (this.config.validateResponse && this.config.schema?.[method]) {
       const [, outputSchema] = this.config.schema[method];
       const [error, value] = h.validate(result, outputSchema, {
         coerce: true,
