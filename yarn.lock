@@ -276,10 +276,10 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.25.9.tgz#585624dc829cfb6e7c0aa6c3ca7d7e6daa87e34f"
   integrity sha512-PPOl1mi6lpLNQxnGoyAfschAodRFYXJ+9fs6WHXz7CSWKbOqiMZsubC+BQsVKuul+3vKLuwTHsS2c2y9EoKwxQ==
 
-"@haiyami/hyperstruct@^1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@haiyami/hyperstruct/-/hyperstruct-1.8.0.tgz#aa354614ca785208d7f2cdce3248bed5aed97d43"
-  integrity sha512-nq/lhe+2lfuRRm0B7uBoGAqwt7qbdQprwiTpqiQa6ujqjpDVV0RAOyoYpKQuV/4fNUA347zV73XVSwBafuh5jw==
+"@haiyami/hyperstruct@^1.8.1":
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/@haiyami/hyperstruct/-/hyperstruct-1.8.1.tgz#ebdded9205267e3cc27026ef4515827ca908d07c"
+  integrity sha512-uHTZxd8dUQIHin9Ndn/WalSemBSdPc7ITyJf5/xpO8sc9pl+7AaSvoqP1tWKhkZN3OAR2UIwEk8TnWZ6HljZbw==
   dependencies:
     acorn "^7.4.1"
     acorn-jsx "^5.3.2"
@@ -2710,7 +2710,7 @@ functional-red-black-tree@^1.0.1:
   integrity sha512-dsKNQNdj6xA3T+QlADDA7mOSlX0qiMINjn0cgr+eGHGsbSHzTabcIogz2+p/iqP1Xs6EP/sS2SbqH+brGTbq0g==
 
 functions-have-names@^1.2.3:
-  version "1.2.4"
+  version "1.2.3"
   resolved "https://registry.npmjs.org/functions-have-names/-/functions-have-names-1.2.3.tgz"
   integrity sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==
 
@@ -3761,7 +3761,7 @@ levn@^0.4.1:
     type-check "~0.4.0"
 
 lines-and-columns@^1.1.6, lines-and-columns@^1.2.4:
-  version "1.2.4"
+  version "1.2.5"
   resolved "https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.2.4.tgz"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
@@ -4612,7 +4612,7 @@ qs@^6.5.2:
     side-channel "^1.1.0"
 
 queue-microtask@^1.2.2, queue-microtask@^1.2.3:
-  version "1.2.4"
+  version "1.2.3"
   resolved "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
